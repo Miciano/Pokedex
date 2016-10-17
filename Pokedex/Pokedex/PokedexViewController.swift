@@ -80,7 +80,7 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
                     self.imagePokemons.append(model)
                     
                     self.pokemons.last!.id < self.resultCount ?
-                        self.loadPokemon(self.pokemons.last!.id+1) :
+                        self.loadPokemon(self.pokemons.last!.id + 1) :
                         self.tableView.reloadData()
                 
                 case .noConnection(let description):
@@ -100,11 +100,13 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
+        if indexPath.row == resultCount {
+            return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.LoadCell, for: indexPath)
+        }
+        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.NormalCell, for: indexPath) as? PokemonViewCell else
         {
-                return indexPath.row == resultCount ?
-                    tableView.dequeueReusableCell(withIdentifier: CellIdentifier.LoadCell, for: indexPath) :
-                    tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
+                return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
         }
         
         cell.configureCell(withModel: pokemons[indexPath.row], pokemonSpriteData: imagePokemons[indexPath.row])
