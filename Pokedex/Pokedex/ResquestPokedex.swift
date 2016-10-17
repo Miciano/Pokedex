@@ -9,24 +9,30 @@
 import Foundation
 import Alamofire
 
+struct PokemonAPIUrl {
+    static let Main: String = "http://pokeapi.co/api/v2/pokemon/"
+}
+
+typealias PokedexCompletion = (_ response: PokedexResponse) -> Void
+typealias PokemonCompletion = (_ response: PokemonResponse) -> Void
+typealias PokedexImageCompletion = (_ response: ImageResponse) -> Void
+
 class ResquestPokedex
 {
-    let API_URL = "http://pokeapi.co/api/v2/pokemon/"
-    let alamofireManager: SessionManager?
-    let parse: ParsePokedex = ParsePokedex()
-    
-    init()
-    {
+    let alamofireManager: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10000
         configuration.timeoutIntervalForResource = 10000
-        alamofireManager = SessionManager(configuration: configuration)
-    }
+        return SessionManager(configuration: configuration);
+    }()
     
-    func getAllPokemons(url:String?, completion:@escaping (_ response: PokedexResponse)->Void)
+    let parse: ParsePokedex = ParsePokedex()
+    
+    func getAllPokemons(url:String?, completion:@escaping PokedexCompletion)
     {
-        let page = url == "" || url == nil ? API_URL : url!
-        alamofireManager?.request(page, method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
+        let page = url == "" || url == nil ? PokemonAPIUrl.Main : url!
+        
+        alamofireManager.request(page, method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
         { (response) in
             
             let statusCode = response.response?.statusCode
@@ -63,10 +69,10 @@ class ResquestPokedex
         }
     }
     
-    func getPokemon(id:Int?, completion:@escaping (_ response: PokemonResponse) -> Void)
+    func getPokemon(id:Int?, completion:@escaping PokemonCompletion)
     {
         guard let id = id else { return }
-        alamofireManager?.request("\(API_URL)\(id)/", method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
+        alamofireManager.request("\(PokemonAPIUrl.Main)\(id)/", method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
         { (response) in
             
             let statusCode = response.response?.statusCode
@@ -103,9 +109,9 @@ class ResquestPokedex
         }
     }
     
-    func getImagePokemon(url:String, completion:@escaping (_ response: ImageResponse)->Void)
+    func getImagePokemon(url:String, completion:@escaping PokedexImageCompletion)
     {
-        alamofireManager?.request(url, method: .get).responseData
+        alamofireManager.request(url, method: .get).responseData
         { (response) in
             
             if response.response?.statusCode == 200
