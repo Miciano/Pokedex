@@ -106,7 +106,7 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.NormalCell, for: indexPath) as? PokemonViewCell else
         {
-                return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
+            return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
         }
         
         cell.configureCell(withModel: pokemons[indexPath.row], pokemonSpriteData: imagePokemons[indexPath.row])
