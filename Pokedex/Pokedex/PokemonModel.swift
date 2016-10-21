@@ -14,3 +14,13 @@ struct PokemonModel
     var name: String
     var urlImage: String
 }
+
+extension PokemonModel
+{
+    init()
+    {
+        self.id = 0
+        self.name = ""
+        self.urlImage = ""
+    }
+}

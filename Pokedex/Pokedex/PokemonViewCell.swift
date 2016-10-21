@@ -15,11 +15,9 @@ class PokemonViewCell: UITableViewCell
     @IBOutlet weak var pokemonIdLb: UILabel!
     @IBOutlet weak var pokemonNameLb: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+    public func configureCell(withModel model: PokemonModel, pokemonSpriteData data:Data) {
+        self.pokemonIdLb.text = "#\(model.id)"
+        self.pokemonNameLb.text = model.name
+        self.imgView.image = UIImage(data: data)
     }
 }

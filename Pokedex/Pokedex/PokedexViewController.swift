@@ -9,6 +9,12 @@
 import Foundation
 import UIKit
 
+struct CellIdentifier {
+    static let LoadCell = "loadCell"
+    static let NormalCell = "cell"
+    static let EmptyCell = "emptyCell"
+}
+
 class PokedexViewController: UITableViewController, RequestPokedexProtocol
 {
     var requestPokedex: ResquestPokedex = ResquestPokedex()
@@ -72,10 +78,11 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
             {
                 case .success(let model):
                     self.imagePokemons.append(model)
-                    if self.pokemons.last!.id < self.resultCount
-                    { self.loadPokemon(self.pokemons.last!.id+1) }
-                    else
-                    { self.tableView.reloadData() }
+                    
+                    self.pokemons.last!.id < self.resultCount ?
+                        self.loadPokemon(self.pokemons.last!.id + 1) :
+                        self.tableView.reloadData()
+                
                 case .noConnection(let description):
                     print(description)
                 case .serverError(let description):
@@ -88,26 +95,23 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if resultModel?.next == "" { return resultCount }
-        return resultCount+1
+        return resultModel?.next == "" ? resultCount : resultCount + 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        if indexPath.row == resultCount
-        { return tableView.dequeueReusableCell(withIdentifier: "loadCell", for: indexPath) }
-        else
-        {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? PokemonViewCell
-            {
-                cell.pokemonIdLb.text = "#\(pokemons[indexPath.row].id)"
-                cell.pokemonNameLb.text = pokemons[indexPath.row].name
-                cell.imgView.image = UIImage(data: imagePokemons[indexPath.row])
-                return cell
-            }
+        if indexPath.row == resultCount {
+            return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.LoadCell, for: indexPath)
         }
         
-        return tableView.dequeueReusableCell(withIdentifier: "emptyCell")!
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.NormalCell, for: indexPath) as? PokemonViewCell else
+        {
+                return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
+        }
+        
+        cell.configureCell(withModel: pokemons[indexPath.row], pokemonSpriteData: imagePokemons[indexPath.row])
+        
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath)
