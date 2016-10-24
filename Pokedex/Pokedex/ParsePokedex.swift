@@ -8,12 +8,12 @@
 
 import Foundation
 
-typealias ParseReponseArray = [String: Any]?
-typealias PokemonSpriteArray = [String: Any]
+typealias ParseReponseDict = [String: Any]?
+typealias PokemonSpriteDict = [String: Any]
 
 class ParsePokedex
 {
-    func parseAllPokedex(response: ParseReponseArray) -> PokedexModel
+    func parseAllPokedex(response: ParseReponseDict) -> PokedexModel
     {
         guard let response = response else { return PokedexModel() }
         
@@ -25,7 +25,7 @@ class ParsePokedex
         return PokedexModel(count: count, next: next, previus: previus, results: results)
     }
     
-    func parsePokemon(response: ParseReponseArray) -> PokemonModel
+    func parsePokemon(response: ParseReponseDict) -> PokemonModel
     {
         guard let response = response else { return PokemonModel() }
         
