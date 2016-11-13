@@ -101,7 +101,12 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         if indexPath.row == resultCount {
-            return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.LoadCell, for: indexPath)
+            
+            guard let cellLoad = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.LoadCell, for: indexPath) as? LoadViewCell else {
+                return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
+            }
+            cellLoad.loadActivity.startAnimating()
+            return cellLoad
         }
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.NormalCell, for: indexPath) as? PokemonViewCell else
