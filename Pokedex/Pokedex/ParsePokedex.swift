@@ -8,34 +8,36 @@
 
 import Foundation
 
-typealias ParseReponseDict = [String: Any]?
+typealias ParseReponseDict = [String: Any]
 typealias PokemonSpriteDict = [String: Any]
 
 class ParsePokedex
 {
-    func parseAllPokedex(response: ParseReponseDict) -> PokedexModel
+    func parseAllPokedex(response: ParseReponseDict) -> PokedexModel?
     {
-        guard let response = response else { return PokedexModel() }
+        guard let count = response["count"] as? Int,
+            let resultsList = response["results"] as? [[String: Any]] //Pego a lista de resultado
+        else {
+            return nil
+        }
         
-        let count = response["count"] as? Int ?? 0
         let next = response["next"] as? String ?? ""
         let previus = response["previous"] as? String ?? ""
-        //Pego a lista de resultado
-        let resultsList = response["results"] as? [[String: Any]] ?? []
         //Pego o numero de filhos da lista de resultados
         let results = resultsList.count
         
         return PokedexModel(count: count, next: next, previus: previus, results: results)
     }
     
-    func parsePokemon(response: ParseReponseDict) -> PokemonModel
+    func parsePokemon(response: ParseReponseDict) -> PokemonModel?
     {
-        guard let response = response else { return PokemonModel() }
-        
-        let name = response["name"] as? String ?? ""
-        let id = response["id"] as? Int ?? 0
-        let sprites = response["sprites"] as? PokemonSpriteDict
-        let urlImage = sprites?["front_default"] as? String ?? ""
+        guard let name = response["name"] as? String,
+            let id = response["id"] as? Int,
+            let sprites = response["sprites"] as? PokemonSpriteDict,
+            let urlImage = sprites["front_default"] as? String
+        else {
+            return nil
+        }
         
         return PokemonModel(id: id, name: name, urlImage: urlImage)
     }

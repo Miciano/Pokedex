@@ -53,8 +53,11 @@ class ResquestPokedex
                     }
                     else if statusCode == 200
                     {
-                        let model = self.parse.parseAllPokedex(response: resultValue)
-                        completion(.success(model: model))
+                        if let dict = resultValue, let model = self.parse.parseAllPokedex(response: dict) {
+                            completion(.success(model: model))
+                        } else {
+                            completion(.invalidResponse)
+                        }
                     }
                 case .failure(let error):
                     //Status de erro
@@ -94,8 +97,12 @@ class ResquestPokedex
                     }
                     else if statusCode == 200
                     {
-                        let model = self.parse.parsePokemon(response: resultValue)
-                        completion(.success(model: model))
+                        if let dict = resultValue,
+                            let model = self.parse.parsePokemon(response: dict) {
+                            completion(.success(model: model))
+                        } else {
+                            completion(.invalidResponse)
+                        }
                     }
                 case .failure(let error):
                     let errorCode = error._code

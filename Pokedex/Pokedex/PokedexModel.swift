@@ -11,17 +11,7 @@ import Foundation
 struct PokedexModel
 {
     let count: Int
-    let next: String
-    let previus: String
+    let next: String?
+    let previus: String?
     let results: Int
-}
-
-extension PokedexModel
-{
-    init() {
-        self.count = 0
-        self.next = ""
-        self.previus = ""
-        self.results = 0
-    }
 }

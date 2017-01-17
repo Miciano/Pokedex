@@ -45,6 +45,8 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
                 print(description)
             case .noConnection(let description):
                 print(description)
+            case .invalidResponse:
+                print("Invalid Response")
             }
         }
     }
@@ -65,6 +67,8 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
                     print(description)
                 case .noConnection(let description):
                     print(description)
+                case .invalidResponse:
+                    print("Invalid Response")
             }
         }
     }
@@ -89,6 +93,8 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
                     print(description)
                 case .timeOut(let description):
                     print(description)
+                case .invalidResponse:
+                    print("Invalid Response")
             }
         }
     }
