@@ -8,9 +8,6 @@
 
 import Foundation
 
-//Apelido para tipos [[String: Any]]
-typealias PokedexResultArray = [[String : Any]]
-
 struct PokedexModel
 {
     let count: Int
