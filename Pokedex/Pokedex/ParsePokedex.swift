@@ -20,7 +20,10 @@ class ParsePokedex
         let count = response["count"] as? Int ?? 0
         let next = response["next"] as? String ?? ""
         let previus = response["previous"] as? String ?? ""
-        let results = response["results"] as? PokedexResultArray ?? []
+        //Pego a lista de resultado
+        let resultsList = response["results"] as? PokedexResultArray ?? []
+        //Pego o numero de filhos da lista de resultados
+        let results = resultsList.count
         
         return PokedexModel(count: count, next: next, previus: previus, results: results)
     }

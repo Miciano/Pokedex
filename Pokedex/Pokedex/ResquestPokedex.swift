@@ -9,7 +9,7 @@
 import Foundation
 import Alamofire
 
-struct PokemonAPIUrl {
+struct PokemonAPIURL {
     static let Main: String = "http://pokeapi.co/api/v2/pokemon/"
 }
 
@@ -23,22 +23,25 @@ class ResquestPokedex
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10000
         configuration.timeoutIntervalForResource = 10000
-        return SessionManager(configuration: configuration);
+        return SessionManager(configuration: configuration)
     }()
     
     let parse: ParsePokedex = ParsePokedex()
     
     func getAllPokemons(url:String?, completion:@escaping PokedexCompletion)
     {
-        let page = url == "" || url == nil ? PokemonAPIUrl.Main : url!
+        let page = url == "" || url == nil ? PokemonAPIURL.Main : url!
         
         alamofireManager.request(page, method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
         { (response) in
             
+            //Pega o status
             let statusCode = response.response?.statusCode
             switch response.result
             {
+                //Status de erro ou sucesso
                 case .success(let value):
+                    //Json com retorno
                     let resultValue = value as? [String: Any]
                     if statusCode == 404
                     {
@@ -54,6 +57,7 @@ class ResquestPokedex
                         completion(.success(model: model))
                     }
                 case .failure(let error):
+                    //Status de erro
                     let errorCode = error._code
                     if errorCode == -1009
                     {
@@ -72,7 +76,7 @@ class ResquestPokedex
     func getPokemon(id:Int?, completion:@escaping PokemonCompletion)
     {
         guard let id = id else { return }
-        alamofireManager.request("\(PokemonAPIUrl.Main)\(id)/", method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
+        alamofireManager.request("\(PokemonAPIURL.Main)\(id)/", method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
         { (response) in
             
             let statusCode = response.response?.statusCode
@@ -123,6 +127,11 @@ class ResquestPokedex
                     return
                 }
                 completion(ImageResponse.success(model: data))
+            }
+            else
+            {
+                let erro = ServerError(description: "Falha no Download, data vazio", errorCode: 404)
+                completion(.serverError(description: erro))
             }
         }
     }

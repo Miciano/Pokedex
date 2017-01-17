@@ -8,6 +8,7 @@
 
 import Foundation
 
+//Apelido para tipos [[String: Any]]
 typealias PokedexResultArray = [[String : Any]]
 
 struct PokedexModel
@@ -15,7 +16,7 @@ struct PokedexModel
     let count: Int
     let next: String
     let previus: String
-    let results: PokedexResultArray
+    let results: Int
 }
 
 extension PokedexModel
@@ -24,6 +25,6 @@ extension PokedexModel
         self.count = 0
         self.next = ""
         self.previus = ""
-        self.results = []
+        self.results = 0
     }
 }

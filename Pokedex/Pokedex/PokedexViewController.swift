@@ -38,7 +38,7 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
             case .success(let model):
                 self.resultModel = model
                 self.loadPokemon(self.resultCount+1)
-                self.resultCount += model.results.count
+                self.resultCount += model.results
             case .serverError(let description):
                 print(description)
             case .timeOut(let description):
