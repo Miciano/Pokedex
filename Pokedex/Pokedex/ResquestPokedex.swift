@@ -53,8 +53,11 @@ class ResquestPokedex
                     }
                     else if statusCode == 200
                     {
-                        let model = self.parse.parseAllPokedex(response: resultValue)
-                        completion(.success(model: model))
+                        if let dict = resultValue, let model = self.parse.parseAllPokedex(response: dict) {
+                            completion(.success(model: model))
+                        } else {
+                            completion(.invalidResponse)
+                        }
                     }
                 case .failure(let error):
                     //Status de erro
@@ -79,35 +82,37 @@ class ResquestPokedex
         alamofireManager.request("\(PokemonAPIURL.Main)\(id)/", method: .get, parameters: nil, encoding: JSONEncoding.default).responseJSON
         { (response) in
             
-            let statusCode = response.response?.statusCode
             switch response.result
             {
                 case .success(let value):
                     let resultValue = value as? [String: Any]
-                    if statusCode == 404
-                    {
+                    switch response.response?.statusCode ?? 0 {
+                    case 404:
                         if let description = resultValue?["detail"] as? String
                         {
-                            let error = ServerError(description: description, errorCode: statusCode!)
+                            let error = ServerError(description: description, errorCode: 404)
                             completion(.serverError(description: error))
                         }
-                    }
-                    else if statusCode == 200
-                    {
-                        let model = self.parse.parsePokemon(response: resultValue)
-                        completion(.success(model: model))
+                    case 200:
+                        if let dict = resultValue,
+                            let model = self.parse.parsePokemon(response: dict) {
+                            completion(.success(model: model))
+                        } else {
+                            completion(.invalidResponse)
+                        }
+                    default:
+                        completion(.invalidResponse)
                     }
                 case .failure(let error):
-                    let errorCode = error._code
-                    if errorCode == -1009
-                    {
-                        let erro = ServerError(description: error.localizedDescription, errorCode: errorCode)
+                    switch error._code {
+                    case -1009 :
+                        let erro = ServerError(description: error.localizedDescription, errorCode: -1009)
                         completion(.noConnection(description: erro))
-                    }
-                    else if errorCode == -1001
-                    {
-                        let erro = ServerError(description: error.localizedDescription, errorCode: errorCode)
+                    case -1001:
+                        let erro = ServerError(description: error.localizedDescription, errorCode: -1001)
                         completion(.timeOut(description: erro))
+                    default:
+                        completion(.invalidResponse)
                     }
             }
         }
