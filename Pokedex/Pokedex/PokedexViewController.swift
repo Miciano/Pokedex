@@ -15,6 +15,7 @@ struct CellIdentifier {
     static let EmptyCell = "emptyCell"
 }
 
+
 class PokedexViewController: UITableViewController, RequestPokedexProtocol
 {
     var requestPokedex: ResquestPokedex = ResquestPokedex()
@@ -59,7 +60,9 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
             switch response
             {
                 case .success(let model):
+                    //Adiciona o pokemon em nossa variavel
                     self.pokemons.append(model)
+                    //Manda fazer load da imagem do pokemon carregado
                     self.loadImagePokemon(url: model.urlImage)
                 case .serverError(let description):
                     print(description)
@@ -81,12 +84,14 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
             switch response
             {
                 case .success(let model):
+                    //Salva a imagem em nossa variavel
                     self.imagePokemons.append(model)
-                    
+                    //If inline
+                    //Se o ultimo pokemon carregado ainda nao for o ultimo pokemon da lista de todos pokemons que nos temos, mandamos ele carregar o proximo pokemon
+                    //Se já tiver sido carregado todos os pokemons eu mando atualizar a tabela
                     self.pokemons.last!.id < self.resultCount ?
                         self.loadPokemon(self.pokemons.last!.id + 1) :
                         self.tableView.reloadData()
-                
                 case .noConnection(let description):
                     print(description)
                 case .serverError(let description):
@@ -99,27 +104,27 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
         }
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return resultModel?.next == "" ? resultCount : resultCount + 1
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //Se for a ultima célula carrego a célula de load
         if indexPath.row == resultCount {
-            
             guard let cellLoad = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.LoadCell, for: indexPath) as? LoadViewCell else {
-                return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
+                return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell, for: indexPath)
             }
+            //Inicio a animação de load
             cellLoad.loadActivity.startAnimating()
             return cellLoad
         }
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.NormalCell, for: indexPath) as? PokemonViewCell else
-        {
-            return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell)!
+        //Se tiver tudo ok carrego a celula de pokemon
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.NormalCell, for: indexPath) as? PokemonViewCell else {
+             return tableView.dequeueReusableCell(withIdentifier: CellIdentifier.EmptyCell, for: indexPath)
         }
         
+        //Configuro o visual da célula
         cell.configureCell(withModel: pokemons[indexPath.row], pokemonSpriteData: imagePokemons[indexPath.row])
         
         return cell

@@ -13,8 +13,4 @@ class LoadViewCell: UITableViewCell
 {
     @IBOutlet weak var loadActivity: UIActivityIndicatorView!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        loadActivity.startAnimating()
-    }
 }
