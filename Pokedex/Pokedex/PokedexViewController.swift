@@ -22,7 +22,7 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
     var resultModel: PokedexModel?
     var resultCount = 0
     var pokemons = [PokemonModel]()
-    var imagePokemons = [Data]()
+    var imagePokemons = [UIImage]()
     
     override func viewDidLoad()
     {
@@ -96,6 +96,8 @@ class PokedexViewController: UITableViewController, RequestPokedexProtocol
                     print(description)
                 case .serverError(let description):
                     print(description)
+                case .downloadCanceled(_ ):
+                    self.loadImagePokemon(url: url)
                 case .timeOut(let description):
                     print(description)
                 case .invalidResponse:

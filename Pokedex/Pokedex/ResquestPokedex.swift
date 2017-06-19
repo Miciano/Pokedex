@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+import AlamofireImage
 
 struct PokemonAPIURL {
     static let Main: String = "http://pokeapi.co/api/v2/pokemon/"
@@ -27,6 +28,10 @@ class ResquestPokedex
     }()
     
     let parse: ParsePokedex = ParsePokedex()
+    
+    init() {
+        Alamofire.DataRequest.addAcceptableImageContentTypes(["image/jpg", "image/png", "image/jpeg"])
+    }
     
     func getAllPokemons(url:String?, completion:@escaping PokedexCompletion)
     {
@@ -118,25 +123,24 @@ class ResquestPokedex
         }
     }
     
-    func getImagePokemon(url:String, completion:@escaping PokedexImageCompletion)
-    {
-        alamofireManager.request(url, method: .get).responseData
-        { (response) in
+    func getImagePokemon(url:String, completion:@escaping PokedexImageCompletion) {
+        
+        let imgView = UIImageView()
+        guard let urlRequest = URL(string: url) else { return }
+        
+        imgView.af_setImage(withURL: urlRequest, placeholderImage: nil, filter: nil, progress: nil, progressQueue: DispatchQueue.main, imageTransition: UIImageView.ImageTransition.noTransition, runImageTransitionIfCached: true){ (response) in
             
-            if response.response?.statusCode == 200
-            {
-                guard let data = response.data else
-                {
-                    let erro = ServerError(description: "Falha no Download, data vazio", errorCode: 404)
-                    completion(.serverError(description: erro))
-                    return
+            switch response.result {
+            case .success(let value):
+                //A variavel 'value' já vem no tipo UIImage
+                completion(.success(model: value))
+            case .failure(let error):
+                let errorCode = error._code
+                if errorCode == -999 || errorCode == 0 {
+                    let erro = ServerError(description: response.result.error.debugDescription, errorCode: errorCode)
+                    //é possivel e comum que o Alamofire cancele o download da imagem, por isso criamos um case do response novo chamado 'downloadCanceled
+                    completion(.downloadCanceled(description: erro))
                 }
-                completion(ImageResponse.success(model: data))
-            }
-            else
-            {
-                let erro = ServerError(description: "Falha no Download, data vazio", errorCode: 404)
-                completion(.serverError(description: erro))
             }
         }
     }

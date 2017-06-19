@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum PokedexResponse
 {
@@ -26,11 +27,11 @@ enum PokemonResponse
     case invalidResponse
 }
 
-enum ImageResponse
-{
-    case success(model: Data)
+enum ImageResponse {
+    case success(model: UIImage)
     case serverError(description: ServerError)
     case timeOut(description: ServerError)
     case noConnection(description: ServerError)
+    case downloadCanceled(description: ServerError)
     case invalidResponse
 }

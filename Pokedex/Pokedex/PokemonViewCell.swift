@@ -15,9 +15,9 @@ class PokemonViewCell: UITableViewCell
     @IBOutlet weak var pokemonIdLb: UILabel!
     @IBOutlet weak var pokemonNameLb: UILabel!
     
-    public func configureCell(withModel model: PokemonModel, pokemonSpriteData data:Data) {
+    public func configureCell(withModel model: PokemonModel, pokemonSpriteData data: UIImage) {
         self.pokemonIdLb.text = "#\(model.id)"
         self.pokemonNameLb.text = model.name
-        self.imgView.image = UIImage(data: data)
+        self.imgView.image = data
     }
 }
